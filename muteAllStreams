@@ -1,0 +1,28 @@
+// Initialize the ZEGOExpressEngine object
+const zg = new ZegoExpressEngine(appID, server);
+
+// Join a video call room
+const roomID = 'your-room-id';
+const token = 'your-token';
+const user = {
+  userID: 'user1',
+  userName: 'User One'
+};
+
+zg.loginRoom(roomID, token, user, { userUpdate: true }).then(() => {
+  // Mute all streams when the user joins the room
+  zg.muteAllStreams();
+}).catch((error) => {
+  console.error('Login room failed:', error);
+});
+
+// Listen for new user streams
+zg.on('roomStreamUpdate', (roomID, updateType, streamList, extendedData) => {
+  if (updateType === 'ADD') {
+    const stream = streamList[0];
+    const streamID = stream.streamID;
+
+    // Grant permission to the new user to publish their stream
+    zg.unmuteStream(streamID);
+  }
+});
