@@ -1,0 +1,34 @@
+<script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script> 
+const peer = new Peer();
+peer.on('connection', (conn) => {
+  conn.on('data', (data) => {
+    console.log('Received: ' + data);
+  });
+
+  conn.send('Hello!');
+});
+const remotePeer = new Peer('other-user-id');
+
+remotePeer.on('open', (id) => {
+  console.log('Connected as ' + id);
+
+  // Send a message to the remote peer
+  remotePeer.send('Hello!');
+});
+<script src="https://unpkg.com/random-pairing@1.0.0/dist/random-pairing.min.js"></script>
+const pairing = new RandomPairing();
+pairing.on('pair', (partner) => {
+  console.log('Paired with: ' + partner.id);
+
+  // Connect to the paired peer using PeerJS
+  const remotePeer = new Peer(partner.id);
+
+  remotePeer.on('open', (id) => {
+    console.log('Connected as ' + id);
+
+    // Send a message to the remote peer
+    remotePeer.send('Hello!');
+  });
+});
+pairing.start();
+npm init -y
