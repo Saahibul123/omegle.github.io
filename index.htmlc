@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Omegle Clone</title>
+  </head>
+  <body>
+    <h1>Welcome to My Omegle Clone!</h1>
+    <video id="localVideo" autoplay muted></video>
+    <video id="remoteVideo" autoplay></video>
+    <button id="startButton">Start Video Chat</button>
+    <button id="stopButton" disabled>Stop Video Chat</button>
+    <script src="main.js"></script>
+  </body>
+</html>
