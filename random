@@ -1,0 +1,8 @@
+const remotePeer = new Peer('other-user-id');
+
+remotePeer.on('open', (id) => {
+  console.log('Connected as ' + id);
+
+  // Send a message to the remote peer
+  remotePeer.send('Hello!');
+});
