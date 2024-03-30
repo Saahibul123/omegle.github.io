@@ -1,0 +1,65 @@
+const localVideo = document.getElementById('localVideo');
+const remoteVideo = document.getElementById('remoteVideo');
+const startButton = document.getElementById('startButton');
+const stopButton = document.getElementById('stopButton');
+
+let localStream;
+let remoteStream;
+let peerConnection;
+
+startButton.addEventListener('click', startCall);
+stopButton.addEventListener('click', stopCall);
+
+async function startCall() {
+  try {
+    localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    localVideo.srcObject = localStream;
+
+    peerConnection = new RTCPeerConnection();
+    peerConnection.addEventListener('icecandidate', handleIceCandidate);
+    peerConnection.addEventListener('track', handleRemoteStream);
+
+    localStream.getTracks().forEach((track) => {
+      peerConnection.addTrack(track, localStream);
+    });
+
+    const offer = await peerConnection.createOffer();
+    await peerConnection.setLocalDescription(offer);
+
+    // send the offer to the remote peer here
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function handleIceCandidate(event) {
+  if (event.candidate) {
+    // send the candidate to the remote peer here
+  }
+}
+
+function handleRemoteStream(event) {
+  remoteStream = event.streams[0];
+  remoteVideo.srcObject = remoteStream;
+}
+
+function stopCall() {
+  if (localStream) {
+    localStream.getTracks().forEach((track) => track.stop());
+    localStream = null;
+  }
+
+  if (remoteStream) {
+    remoteStream.getTracks().forEach((track) => track.stop());
+    remoteStream = null;
+  }
+
+  if (peerConnection) {
+    peerConnection.close();
+    peerConnection = null;
+  }
+
+  startButton.disabled = false;
+  stopButton.disabled = true;
+}
