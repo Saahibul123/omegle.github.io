@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Video Chat</title>
+  <style>
+    #localVideo {
+      width: 150px;
+    }
+
+    #remoteVideo {
+      width: 300px;
+    }
+  </style>
+</head>
+<body>
+  <video id="localVideo" autoplay muted></video>
+  <video id="remoteVideo" autoplay></video>
+
+  <button id="startVideo">Start Video</button>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    const localVideo = document.getElementById('localVideo');
+    const remoteVideo = document.getElementById('remoteVideo');
+
+    const startVideo = document.getElementById('startVideo');
+
+    const localStream = null;
+
+    function startVideoCall() {
+      navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true
+      }).then(function(stream) {
+        localStream = stream;
+        localVideo.srcObject = stream;
+
+        socket.emit('join', 'room1');
+
+        socket.on('video', function(video) {
+          remoteVideo.srcObject = video;
+        });
+
+        const videoTracks = stream.getVideoTracks();
+
+        videoTracks.forEach(function(videoTrack) {
+          socket.emit('video', {
+            room: 'room1',
+            video: videoTrack
+          });
+        });
+      });
+    }
+
+    startVideo.addEventListener('click', startVideoCall);
+  </script>
+</body>
+</html>
