@@ -1,0 +1,7 @@
+peer.on('connection', (conn) => {
+  conn.on('data', (data) => {
+    console.log('Received: ' + data);
+  });
+
+  conn.send('Hello!');
+});
